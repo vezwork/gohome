@@ -11,8 +11,9 @@ function startup() {
     document.addEventListener('contextmenu', function(e) {
         if (e.target.className.split(" ")[0] == "file") {
             target = e.target;
-            filename = target.parentNode.textContent+target.getAttribute("filetype")
-            context_element.innerHTML = "<a>⇣ Download</a>" +
+            filename = target.parentNode.textContent+target.getAttribute("filetype");
+            console.log("drop " + filename);
+            context_element.innerHTML = "<a href='/upl/"+ filename + "' download>⇣ Download</a>" +
                 "<a>📂 Preview / Edit</a>" +
                 "<div></div>" +
                 "<a onclick=deleteFile('"+filename+"');>✖ Delete</a>" +
@@ -159,7 +160,6 @@ function deleteFile(name) {
     //apply to target
     fun = function(eldel) {
         return function() {
-                console.log(xhr.readyState);
                 if (xhr.readyState == 4) {
                     if (xhr.status == 0) {
                         console.log('A state error occurred!');

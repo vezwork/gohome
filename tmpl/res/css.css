@@ -101,6 +101,7 @@ body {
 }
 
 #context-menu a {
+    cursor: pointer;
 	display: block;
 	width: 169px;
 	padding: 13px; 
