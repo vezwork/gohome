@@ -185,12 +185,29 @@ func staticHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func downloadHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method =="GET" {
+        downloadName := r.URL.Path[strings.LastIndex(r.URL.Path, "/")+1:]
+        fmt.Println("download: " + downloadName)
+        
+        realPath := strings.Replace(r.URL.Path[1:], "dnl", "upl", 1)
+        
+        //func Replace(s, old, new string, n int) string
+        w.Header().Set("Content-Disposition", "attachment; filename=" + downloadName)
+		http.ServeFile(w, r, realPath)
+        
+	} 
+}
+
 func main() {
 	DirectoryToUpFiles()
 	http.HandleFunc("/", defaultHandler)
 	http.HandleFunc("/tmpl/res/", staticHandler)
 	http.HandleFunc("/upl/", staticHandler)
+    http.HandleFunc("/dnl/", downloadHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.ListenAndServe(":8080", nil)
 }
+
+//header('Content-Disposition: attachment; filename=' . $filename);

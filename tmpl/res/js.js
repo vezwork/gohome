@@ -13,7 +13,7 @@ function startup() {
             target = e.target;
             filename = target.parentNode.textContent+target.getAttribute("filetype");
             console.log("drop " + filename);
-            context_element.innerHTML = "<a href='/upl/"+ filename + "' download>⇣ Download</a>" +
+            context_element.innerHTML = "<a href='/dnl/"+ filename + "' download target='_blank'>⇣ Download</a>" +
                 "<a>📂 Preview / Edit</a>" +
                 "<div></div>" +
                 "<a onclick=deleteFile('"+filename+"');>✖ Delete</a>" +
@@ -129,23 +129,25 @@ function uploadFiles(fs) {
 	var xhr = new XMLHttpRequest();
 	    xhr.open('POST', '/', true);
 	
-    var fun = function(files) {
+    var fsinfo = [];
+    for (var i = 0; i < fs.length; i++) { 
+        fsinfo.push({name: fs[i].name.substr(0, fs[i].name.lastIndexOf('.')), ext: fs[i].name.substr(fs[i].name.lastIndexOf('.') + 1)});
+    }
+    
+    xhr.onreadystatechange = function(files) {
         return function() {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 0) {
-                        console.log('A state error occurred!');
-                    } else if (xhr.status == 200) {
-                        console.log('file uploaded!');
-                        for (var i = 0; i < files.length; i++) {
-                            var name = fs[i].name.substr(0, fs[i].name.lastIndexOf('.'));
-                            var ext = fs[i].name.substr(fs[i].name.lastIndexOf('.') + 1);
-                            addFileElement(name, ext);
-                        }
+            if (xhr.readyState == 4) {
+                if (xhr.status == 0) {
+                    console.log('A state error occurred!');
+                } else if (xhr.status == 200) {
+                    console.log('file uploaded! ');
+                    for (var i = 0; i < files.length; i++) {
+                        addFileElement(files[i].name, files[i].ext);
                     }
                 }
-            };
-    }(fs);
-	xhr.onreadystatechange = fun;
+            }
+        };
+    }(fsinfo);
 	    
     for (var i = 0; i < fs.length; i++) {
         fd.append('uploadfile', fs[i], fs[i].name);
@@ -164,7 +166,7 @@ function deleteFile(name) {
                     if (xhr.status == 0) {
                         console.log('A state error occurred!');
                     } else if (xhr.status == 200) {
-                        console.log('file uploaded!');
+                        console.log('file deleted!');
                         deleteFileElement(eldel);
                     }
                 }
