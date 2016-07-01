@@ -128,22 +128,27 @@ function uploadFiles(fs) {
 	var xhr = new XMLHttpRequest();
 	    xhr.open('POST', '/', true);
 	
-    fun = function(name, ext) {
+    var fun = function(files) {
         return function() {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 0) {
                         console.log('A state error occurred!');
                     } else if (xhr.status == 200) {
                         console.log('file uploaded!');
-                        addFileElement(name, ext);
+                        for (var i = 0; i < files.length; i++) {
+                            var name = fs[i].name.substr(0, fs[i].name.lastIndexOf('.'));
+                            var ext = fs[i].name.substr(fs[i].name.lastIndexOf('.') + 1);
+                            addFileElement(name, ext);
+                        }
                     }
                 }
             };
-    }(fs[0].name.substr(0, fs[0].name.lastIndexOf('.')),fs[0].name.substr(fs[0].name.lastIndexOf('.') + 1));
+    }(fs);
 	xhr.onreadystatechange = fun;
 	    
-	var f = fs[0];
-	fd.append('uploadfile', f, f.name);
+    for (var i = 0; i < fs.length; i++) {
+        fd.append('uploadfile', fs[i], fs[i].name);
+    }
 
 	xhr.send(fd);
 }

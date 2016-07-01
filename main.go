@@ -10,6 +10,7 @@ import(
 	"os"
 	"time"
 	"strings"
+    "mime/multipart"
 )
 
 type Page struct {
@@ -135,23 +136,38 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "POST" {
 		fmt.Println("default POST")
 		r.ParseMultipartForm(32 << 20)
-		file, handler, err := r.FormFile("uploadfile")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		defer file.Close()
-		f, err := os.Create("./upl/"+handler.Filename)
-		if err != nil {
-		    fmt.Println(err)
-		    return
-		}
-		defer f.Close()
-		io.Copy(f, file)
-		fi, _ := f.Stat()
-		RegisterFile(fi)
-		
+		files, err := FormFiles(r, "uploadfile")
+        if err != nil {
+            fmt.Println(err)
+            return
+        }
+        
+        for _,file := range files {
+            go ProcessFile(file)
+        }
 	}
+}
+
+func ProcessFile(handler *multipart.FileHeader) {
+    file, err := handler.Open()
+    if err != nil {
+        return
+    }
+    defer file.Close()
+    
+    newFile, err := os.Create("./upl/"+handler.Filename)
+	if err != nil {
+		return
+	}
+    defer newFile.Close()
+    
+    _, err = io.Copy(newFile, file)
+    if err != nil {
+        return
+    }
+    
+    fi, _ := newFile.Stat()
+    RegisterFile(fi)
 }
 
 func staticHandler(w http.ResponseWriter, r *http.Request) {
