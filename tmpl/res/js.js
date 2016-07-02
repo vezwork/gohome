@@ -2,8 +2,15 @@ var dropzone;
 var target;
 var uploadInput;
 
+var fileCtxtDOM = "<a download target='_blank' id='ctxt-download'>⇣ Download</a><a>📂 Preview / Edit</a><div></div><a id='ctxt-delete'>✖ Delete</a><a>✎ Rename</a><div></div><a>� Info</a><a>🔗 Get Link</a>";
+var dropCtxtDOM = "<a onclick='selectFile();'>⇡ Upload</a><a>✚ New Text File</a>";
+
 function startup() {
-    context_element = document.getElementById("context-menu");
+    ctxtModal = new Modal("context-menu");
+    errModal = new Modal("error");
+    dlogModal = new Modal("dialog").setAnim("fadedropin", "fadedropout").set("howdy friends").show();
+    dlogBack = new Modal("dialog-back").setAnim("fadein").show();
+    
     dropzone  = document.getElementById('dropzone');
     uploadInput = document.getElementById("uploadfile");
     
@@ -12,46 +19,42 @@ function startup() {
         if (e.target.className.split(" ")[0] == "file") {
             target = e.target;
             filename = target.parentNode.textContent+target.getAttribute("filetype");
-            console.log("drop " + filename);
-            context_element.innerHTML = "<a href='/dnl/"+ filename + "' download target='_blank'>⇣ Download</a>" +
-                "<a>📂 Preview / Edit</a>" +
-                "<div></div>" +
-                "<a onclick=deleteFile('"+filename+"');>✖ Delete</a>" +
-                "<a>✎ Rename</a>"+
-                "<div></div>" +
-                "<a>� Info</a>" +
-                "<a>🔗 Get Link</a>";
+
+            ctxtModal.dom.innerHTML = fileCtxtDOM;
+            ctxtModal.dom.querySelector("#ctxt-download").href = "/dnl/" + filename;
+            ctxtModal.dom.querySelector("#ctxt-delete").onclick = function() { deleteFile(filename) };
+            console.log("deleteFile('" + filename + "')");
+            
             var view_bottom = window.innerHeight + window.pageYOffset; //bottom of viewport
             if (view_bottom - e.pageY > 300) {
-                context_element.style.top = e.pageY+"px";
-                context_element.style.left = e.pageX+"px";
+                ctxtModal.dom.style.top = e.pageY+"px";
+                ctxtModal.dom.style.left = e.pageX+"px";
             } else {
-                context_element.style.top = (e.pageY - 300)+"px";
-                context_element.style.left = e.pageX+"px";
+                ctxtModal.dom.style.top = (e.pageY - 300)+"px";
+                ctxtModal.dom.style.left = e.pageX+"px";
             }
-            context_element.style.display = "block";
+            ctxtModal.show();
             
         } else if (e.target.id == "dropzone") {
-             context_element.innerHTML = "\
-                <a onclick='selectFile();'>⇡ Upload</a>\
-                <a>✚ New Text File</a>";
+            ctxtModal.dom.innerHTML = dropCtxtDOM;
+            
             var view_bottom = window.innerHeight + window.pageYOffset;
             if (view_bottom - e.pageY < 100) {
-                context_element.style.top = (e.pageY-100)+"px";
-                context_element.style.left = e.pageX+"px";
+                ctxtModal.dom.style.top = (e.pageY-100)+"px";
+                ctxtModal.dom.style.left = e.pageX+"px";
             } else {
-                context_element.style.top = e.pageY+"px";
-                context_element.style.left = e.pageX+"px";
+                ctxtModal.dom.style.top = e.pageY+"px";
+                ctxtModal.dom.style.left = e.pageX+"px";
             }
-            context_element.style.display = "block";
+            ctxtModal.show();
         }else {
-            context_element.style.display = "none";
+            ctxtModal.hide();
         }
         e.preventDefault();
     }, false);
     
     document.addEventListener('click', function(e) {
-        context_element.style.display = "none";
+        ctxtModal.hide();
     });
     
     //file upload stuff
@@ -83,8 +86,8 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
 }
 
 function deleteFileElement(eldel) {
-    eldel.parentNode.style.webkitAnimationDirection = "reverse";
-    eldel.parentNode.style.webkitAnimationName = "expand";
+    eldel.parentNode.style.animationDirection = "reverse";
+    eldel.parentNode.style.animationName = "expand";
     
     fun = function (elem) {
         return function(e) {
@@ -97,11 +100,11 @@ function deleteFileElement(eldel) {
 
 function addFileElement(name, ext) {
     dropzone.insertAdjacentHTML('afterbegin', "<a href='/upl/"+ name + "." +ext +"'><div class='file "+ ext +"' filetype='."+ext+"'></div>"+name+"</a>");
-    dropzone.firstChild.style.webkitAnimationName = "expand";
+    dropzone.firstChild.style.animationName = "expand";
 
     fun = function (elem) {
         return function(e) {
-            elem.style.webkitAnimationName = "";
+            elem.style.animationName = "";
         };
     }(dropzone.firstChild);
     dropzone.firstChild.addEventListener("animationend", fun);
@@ -160,7 +163,7 @@ function deleteFile(name) {
 	var xhr = new XMLHttpRequest();
 	    xhr.open('DELETE', "/upl/" + name, true);
     //apply to target
-    fun = function(eldel) {
+    xhr.onreadystatechange =  function(eldel) {
         return function() {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 0) {
@@ -172,7 +175,6 @@ function deleteFile(name) {
                 }
             };
     }(target);
-    
-    xhr.onreadystatechange = fun;
+
     xhr.send();
 }

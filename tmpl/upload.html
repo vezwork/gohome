@@ -11,12 +11,11 @@
   	<link rel="stylesheet" href="./tmpl/res/css.css">
     <link rel="stylesheet" href="./tmpl/res/fileext.css">
 	<script src="./tmpl/res/js.js"></script>
+    <script src="./tmpl/res/modal.min.js"></script>
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body onload="startup();">
-	<div id="context-menu">
-	</div>
     <div id="topbar">🏠·Go·Home <div style="float:right; margin-right: 40px;"> <button>&#x1f50d;</button> <button onclick="selectFile();">&#x2795;</button></div></div>
 	<div id="dropzone">
         {{range $key, $UpFile := .}}
