@@ -91,7 +91,7 @@ body {
 	z-index: 10;
 	width: 200px; 
 	background-color: white; 
-	box-shadow: 0px 0px 18px rgba(0,0,0,0.2); 
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 	top:0px; 
 	left: 0px;
 	display: none;
@@ -129,6 +129,7 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    max-width: 95%;
     
     background: white;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
@@ -150,8 +151,7 @@ body {
     height: 100%;
     background-color: rgba(0,0,0,0.6);
     display: none;
-    z-index: 98
-    animation-name: fade-in;
+    z-index: 98;
     animation-timing-function: ease-out;
     animation-duration: 0.75s;
 }

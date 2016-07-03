@@ -10,13 +10,14 @@
 
   	<link rel="stylesheet" href="./tmpl/res/css.css">
     <link rel="stylesheet" href="./tmpl/res/fileext.css">
+    <link rel="stylesheet" href="./tmpl/res/pi.css">
 	<script src="./tmpl/res/js.js"></script>
     <script src="./tmpl/res/modal.min.js"></script>
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body onload="startup();">
-    <div id="topbar">🏠·Go·Home <div style="float:right; margin-right: 40px;"> <button>&#x1f50d;</button> <button onclick="selectFile();">&#x2795;</button></div></div>
+    <div id="topbar">🏠·Go·Home <div style="float:right; margin-right: 40px;"> <button class="pi-button">&#x1f50d;</button> <button class="pi-button" onclick="selectFile();">&#x2795;</button></div></div>
 	<div id="dropzone">
         {{range $key, $UpFile := .}}
             <a href="{{ $UpFile.Path }}"><div class="file {{ $UpFile.TypeNoDot }}" filetype="{{ $UpFile.Type }}"></div>{{ $UpFile.Name }}</a>

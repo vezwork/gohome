@@ -8,8 +8,12 @@ var dropCtxtDOM = "<a onclick='selectFile();'>⇡ Upload</a><a>✚ New Text File
 function startup() {
     ctxtModal = new Modal("context-menu");
     errModal = new Modal("error");
-    dlogModal = new Modal("dialog").setAnim("fadedropin", "fadedropout").set("howdy friends").show();
+    dlogModal = new Modal("dialog").setAnim("fadedropin", "fadedropout").set("<input placeholder='rename things' class='vezinput'><button class='pi-button' style='background: aqua;'>click</button>").show();
     dlogBack = new Modal("dialog-back").setAnim("fadein").show();
+    dlogBack.dom.onclick = function() {
+        dlogModal.hide();
+        dlogBack.hide();
+    }
     
     dropzone  = document.getElementById('dropzone');
     uploadInput = document.getElementById("uploadfile");
@@ -34,6 +38,7 @@ function startup() {
                 ctxtModal.dom.style.left = e.pageX+"px";
             }
             ctxtModal.show();
+            e.preventDefault();
             
         } else if (e.target.id == "dropzone") {
             ctxtModal.dom.innerHTML = dropCtxtDOM;
@@ -47,10 +52,12 @@ function startup() {
                 ctxtModal.dom.style.left = e.pageX+"px";
             }
             ctxtModal.show();
+            e.preventDefault();
+            
         }else {
             ctxtModal.hide();
+            //e.preventDefault();
         }
-        e.preventDefault();
     }, false);
     
     document.addEventListener('click', function(e) {
